@@ -5,7 +5,7 @@ min_noctalia = "5.0.0"
 author = "jubii"
 license = "MIT"
 dependencies = ["hyprpicker"]
-tags = ["tool"]
+tags = ["tool", "productivity"]
 icon = "color-picker"
 description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
 

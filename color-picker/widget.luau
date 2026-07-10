@@ -54,7 +54,11 @@ local function handleStream(line: string)
         -- normalizes the numbers
         if output_format == "normal" then
           -- hsl and hsv's first component is in 0 - 360 range
-          num /= if color_format == "hsl" or color_format == "hsv" and i == 1 then 360 else d
+          if color_format == "hsl" or color_format == "hsv" and i == 1 then
+            num /= 360
+          else
+            num /= d
+          end
         end
 
         table.insert(components, num)
