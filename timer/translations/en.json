@@ -10,6 +10,12 @@
     },
     "show_progress": {
       "label": "Show progress bar"
+    },
+    "notify": {
+      "label": "Send notification"
+    },
+    "play_sound": {
+      "label": "Play a notification sound"
     }
   }
 }

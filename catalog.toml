@@ -3,11 +3,12 @@ id = "jubii/timer"
 name = "Timer"
 version = "1.0.0"
 author = "jubii"
+dependencies = ["libpulse"]
 license = "MIT"
 icon = "clock"
-description = "A countdown timer desktop widget with start/pause and reset."
+description = "A timer + stopwatch desktop widget with start/pause, reset, and timer adjustment buttons."
 min_noctalia = "5.0.0"
-tags = ["countdown", "desktop"]
+tags = ["timer", "desktop", "productivity"]
 
 [[plugin]]
 id = "jubii/color-picker"
@@ -19,4 +20,4 @@ license = "MIT"
 icon = "color-picker"
 description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
 min_noctalia = "5.0.0"
-tags = ["tool"]
+tags = ["tool", "productivity"]

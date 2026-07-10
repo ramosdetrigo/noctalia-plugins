@@ -11,15 +11,17 @@
 --   desktopWidget.getConfig(key)          settings (seeded from the manifest)
 --   button onClick = "name"               calls the plugin global of that name
 
-local duration = desktopWidget.getConfig("duration")
+local duration = 300 -- default: 5 minutes
 local color = desktopWidget.getConfig("color")
 local showProgress = desktopWidget.getConfig("show_progress")
 
 noctalia.setUpdateInterval(100)
 
-local remaining = duration
+local counter = duration
 local running = false
-local deadline = 0 -- os.clock() timestamp when the countdown hits zero
+local timeAnchor = 0 -- os.clock() timestamp when the countdown hits zero
+
+local mode = "timer"
 
 local function formatTime(seconds)
   local m = seconds // 60
@@ -34,36 +36,36 @@ local function render()
   -- timer label
   local rows = {
     ui.row({align="center", justify="center"}, {
-      if not running then ui.button({
+      if not running and mode == "timer" then ui.button({
         variant = "ghost",
         glyph = "minus",
         glyphSize = 18,
         color = "on_surface",
-        onClick = "minus60",
-        onRightClick = "minus10",
+        onClick = "minus10",
+        onRightClick = "minus60",
       }) else nil,
 
       ui.label({
-        text = formatTime(remaining),
+        text = formatTime(counter),
         fontSize = 34,
         fontWeight = "bold",
-        color = remaining == 0 and "error" or color,
+        color = if counter == 0 and mode == "timer" then "error" else color,
       }),
 
-      if not running then ui.button({
+      if not running and mode == "timer" then ui.button({
         variant = "ghost",
         glyph = "plus",
         glyphSize = 18,
         color = "on_surface",
-        onClick = "plus60",
-        onRightClick = "plus10",
+        onClick = "plus10",
+        onRightClick = "plus60",
       }) else nil,
     })
   }
 
-  if showProgress then
+  if showProgress and mode == "timer" then
     table.insert(rows, ui.progress({
-      progress = duration > 0 and remaining / duration or 0,
+      progress = duration > 0 and counter / duration or 0,
       fill = color,
       width = 160,
       height = 6,
@@ -75,12 +77,17 @@ local function render()
     ui.button({
       text = running and "Pause" or "Start",
       variant = "primary",
-      onClick = "toggleTimer",
+      onClick = "toggleClock",
+    }),
+    ui.button({
+      glyph = mode == "timer" and "stopwatch" or "hourglass-empty",
+      variant = "ghost",
+      onClick = "switchMode",
     }),
     ui.button({
       text = "Reset",
       variant = "outline",
-      onClick = "resetTimer",
+      onClick = "resetCounter",
     }),
   }))
 
@@ -88,51 +95,81 @@ local function render()
 end
 
 function update()
+
   desktopWidget.setWantsSecondTicks(true)
   if running then
-    remaining = math.max(0, deadline - os.clock())
-    if remaining == 0 then
-      running = false
-      noctalia.notify("Timer", `Time's up — {formatTime(duration)} elapsed`)
+    if mode == "timer" then
+      counter = math.max(0, timeAnchor - os.clock())
+      if counter == 0 then
+        running = false
+        -- System notification
+        if noctalia.getConfig("notify") then
+          noctalia.notify("Timer", `Time's up — {formatTime(duration)} elapsed`)
+        end
+        -- Notification sound
+        if noctalia.getConfig("play_sound") then
+          local dir = noctalia.pluginDir()
+          if dir then
+            local file = dir.."/notify.wav"
+            noctalia.runAsync(`paplay --property=media.role=event {file}`)
+          end
+        end
+      end
+    else
+      counter = -(timeAnchor - os.clock())
     end
   end
   render()
 end
 
-function toggleTimer()
-  if remaining == 0 then
-    remaining = duration
+function toggleClock()
+  if mode == "timer" and counter == 0 then
+    counter = duration
   end
   running = not running
-  if running then
-    deadline = os.clock() + remaining
+  if running and mode == "timer" then
+    timeAnchor = os.clock() + counter
+  else
+    timeAnchor = os.clock() - counter
   end
+
   render()
 end
 
-function resetTimer()
+function resetCounter()
   running = false
-  remaining = duration
+  counter = if mode == "timer" then duration else 0
   render()
 end
 
-function changeTimer(delta)
+function changeCounter(delta)
   duration = math.max(0, duration + delta)
-  remaining = math.max(0, remaining + delta)
+  counter = math.max(0, counter + delta)
 end
 
 function minus10()
-  changeTimer(-10)
+  changeCounter(-10)
 end
 
 function minus60()
-  changeTimer(-60)
+  changeCounter(-60)
 end
 
 function plus10()
-  changeTimer(10)
+  changeCounter(10)
 end
 
 function plus60()
-  changeTimer(60)
+  changeCounter(60)
+end
+
+function switchMode()
+  if mode == "timer" then
+    mode = "stopwatch"
+    counter = 0
+  else
+    mode = "timer"
+    counter = duration
+  end
+  resetCounter()
 end
