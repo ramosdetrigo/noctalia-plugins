@@ -1,5 +1,5 @@
 # Júlia's Plugins
 
-Noctalia...plugins made by Júlia
+Noctalia plugins... made by Júlia
 
 :p
