@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "duration": {
+      "label": "Duration (seconds)",
+      "description": "Countdown length in seconds."
+    },
+    "color": {
+      "label": "Color",
+      "description": "Accent color for the time and progress bar."
+    },
+    "show_progress": {
+      "label": "Show progress bar"
+    }
+  }
+}

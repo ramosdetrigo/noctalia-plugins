@@ -1,0 +1,22 @@
+[[plugin]]
+id = "jubii/timer"
+name = "Timer"
+version = "1.0.0"
+author = "jubii"
+license = "MIT"
+icon = "clock"
+description = "A countdown timer desktop widget with start/pause and reset."
+min_noctalia = "5.0.0"
+tags = ["countdown", "desktop"]
+
+[[plugin]]
+id = "jubii/color-picker"
+name = "Color Picker"
+version = "1.0.0"
+author = "jubii"
+dependencies = ["hyprpicker"]
+license = "MIT"
+icon = "color-picker"
+description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
+min_noctalia = "5.0.0"
+tags = ["tool"]

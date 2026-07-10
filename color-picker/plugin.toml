@@ -1,0 +1,47 @@
+id = "jubii/color-picker"
+name = "Color Picker"
+version = "1.0.0"
+min_noctalia = "5.0.0"
+author = "jubii"
+license = "MIT"
+dependencies = ["hyprpicker"]
+tags = ["tool"]
+icon = "color-picker"
+description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
+
+[[widget]]
+id = "widget"
+entry = "widget.luau"
+
+    [[widget.setting]]
+    key = "notify"
+    type = "bool"
+    label_key = "settings.notify.label"
+    description_key = "settings.notify.description"
+    default = true
+
+    [[widget.setting]]
+    key = "color_format"
+    type = "select"
+    label_key = "settings.color_format.label"
+    description_key = "settings.color_format.description"
+    default = "hex"
+    options = [
+        {label = "HEX", value = "hex"},
+        {label = "RGB", value = "rgb"},
+        {label = "HSL", value = "hsl"},
+        {label = "HSV", value = "hsv"},
+        {label = "CMYK", value = "cmyk"},
+    ]
+
+    [[widget.setting]]
+    key = "output_format"
+    type = "select"
+    label_key = "settings.output_format.label"
+    description_key = "settings.output_format.description"
+    default = "css"
+    options = [
+        {label = "CSS", value = "css"},
+        {label = "Raw", value = "raw"},
+        {label = "Raw normalized", value = "normal"},
+    ]
