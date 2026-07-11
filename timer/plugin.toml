@@ -19,6 +19,15 @@ id = "timer"
 entry = "timer.luau"
 
   [[desktop_widget.setting]]
+  key = "default_duration"
+  type = "int"
+  label_key = "settings.default_duration.label"
+  description_key = "settings.default_duration.description"
+  default = 300 # 5 min
+  min = 1
+  max = 7200 # 2 hours
+
+  [[desktop_widget.setting]]
   key = "color"
   type = "color"
   label_key = "settings.color.label"

@@ -11,7 +11,7 @@
 --   desktopWidget.getConfig(key)          settings (seeded from the manifest)
 --   button onClick = "name"               calls the plugin global of that name
 
-local duration = 300 -- default: 5 minutes
+local duration = desktopWidget.getConfig("default_duration")
 local color = desktopWidget.getConfig("color")
 local showProgress = desktopWidget.getConfig("show_progress")
 

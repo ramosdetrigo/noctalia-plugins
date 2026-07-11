@@ -1,8 +1,8 @@
 {
   "settings": {
-    "duration": {
-      "label": "Duration (seconds)",
-      "description": "Countdown length in seconds."
+    "default_duration": {
+      "label": "Default duration (seconds)",
+      "description": "Default countdown length in seconds."
     },
     "color": {
       "label": "Color",
