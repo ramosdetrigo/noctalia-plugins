@@ -8,6 +8,7 @@ dependencies = ["hyprpicker"]
 tags = ["tool", "productivity"]
 icon = "color-picker"
 description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
+plugin_api = 3
 
 [[widget]]
 id = "widget"

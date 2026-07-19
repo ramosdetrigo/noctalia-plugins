@@ -9,6 +9,7 @@ icon = "clock"
 description = "A timer + stopwatch desktop widget with start/pause, reset, and timer adjustment buttons."
 min_noctalia = "5.0.0"
 tags = ["timer", "desktop", "productivity"]
+plugin_api = 3
 
 [[plugin]]
 id = "jubii/color-picker"
@@ -21,3 +22,4 @@ icon = "color-picker"
 description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
 min_noctalia = "5.0.0"
 tags = ["tool", "productivity"]
+plugin_api = 3
