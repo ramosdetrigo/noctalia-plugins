@@ -21,9 +21,9 @@ local format_strings = {
   }
 }
 
-local notify: boolean = barWidget.getConfig("notify")
-local color_format: string = barWidget.getConfig("color_format")
-local output_format: string = barWidget.getConfig("output_format")
+local notify: boolean = noctalia.getConfig("notify")
+local color_format: string = noctalia.getConfig("color_format")
+local output_format: string = noctalia.getConfig("output_format")
 
 local format_opts: string = `--format={color_format}`
 -- we don't handle hex to allow it to show correctly in the preview.
@@ -81,6 +81,7 @@ local function handleStream(line: string)
 end
 
 function onClick()
+  noctalia.notify("clicked!")
   noctalia.runStream(
     `sh -c 'hyprpicker -b {format_opts} || printf "exit\n"'`,
     handleStream
