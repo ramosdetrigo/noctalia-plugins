@@ -11,9 +11,9 @@
 --   desktopWidget.getConfig(key)          settings (seeded from the manifest)
 --   button onClick = "name"               calls the plugin global of that name
 
-local duration = desktopWidget.getConfig("default_duration")
-local color = desktopWidget.getConfig("color")
-local showProgress = desktopWidget.getConfig("show_progress")
+local duration = noctalia.getConfig("default_duration")
+local color = noctalia.getConfig("color")
+local showProgress = noctalia.getConfig("show_progress")
 
 noctalia.setUpdateInterval(100)
 
