@@ -81,7 +81,6 @@ local function handleStream(line: string)
 end
 
 function onClick()
-  noctalia.notify("clicked!")
   noctalia.runStream(
     `sh -c 'hyprpicker -b {format_opts} || printf "exit\n"'`,
     handleStream
