@@ -1,0 +1,16 @@
+{
+  "database-empty": "O arquivo projets.cfg está vazio ou não foi encontrado",
+  "loading": "Carregando…",
+  "loading-subtitle": "Lendo projetos da Godot",
+  "no-projects-found": "Nenhum projeto foi encontrado.",
+  "settings": {
+    "projects_path": {
+      "description": "Caminho pro arquivo projets.cfg da Godot.",
+      "label": "Caminho do projets.cfg"
+    },
+    "max_results": {
+      "description": "Número máximo de projetos para mostrar.",
+      "label": "Máximo de resultados"
+    }
+  }
+}

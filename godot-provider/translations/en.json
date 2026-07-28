@@ -1,0 +1,16 @@
+{
+  "database-empty": "Godot projets.cfg is empty or not found",
+  "loading": "Loading…",
+  "loading-subtitle": "Reading Godot projects",
+  "no-projects-found": "No projects found",
+  "settings": {
+    "projects_path": {
+      "description": "Path to Godot's projets.cfg file.",
+      "label": "Godot projets.cfg path"
+    },
+    "max_results": {
+      "description": "Maximum number of projects to display.",
+      "label": "Maximum results"
+    }
+  }
+}

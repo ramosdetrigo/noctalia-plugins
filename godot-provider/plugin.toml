@@ -1,0 +1,34 @@
+id = "jubii/godot-provider"
+name = "Godot Provider"
+author = "jubii"
+version = "1.0.0"
+plugin_api = 3
+license = "MIT"
+dependencies = ["godot"]
+icon = "folder-open"
+description = "Open a recent Godot project from the launcher. Type /gd to list your projects."
+tags = ["launcher", "development", "productivity"]
+
+[[setting]]
+key = "projects_path"
+type = "file"
+label_key = "settings.projects_path.label"
+description_key = "settings.projects_path.description"
+default = "~/.local/share/godot/projects.cfg"
+
+[[setting]]
+key = "max_results"
+type = "int"
+label_key = "settings.max_results.label"
+description_key = "settings.max_results.description"
+default = 20
+min = 1
+max = 100
+
+[[launcher_provider]]
+id = "provider"
+entry = "godot_provider.luau"
+prefix = "gd"
+glyph = "robot"
+include_in_global_search = false
+debounce_ms = 0

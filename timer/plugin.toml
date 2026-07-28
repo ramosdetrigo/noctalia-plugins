@@ -6,7 +6,6 @@
 id = "jubii/timer"
 name = "Timer"
 version = "1.0.1"
-min_noctalia = "5.0.0"
 author = "jubii"
 dependencies = ["paplay"]
 license = "MIT"

@@ -7,7 +7,6 @@ dependencies = ["libpulse"]
 license = "MIT"
 icon = "clock"
 description = "A timer + stopwatch desktop widget with start/pause, reset, and timer adjustment buttons."
-min_noctalia = "5.0.0"
 tags = ["timer", "desktop", "productivity"]
 plugin_api = 3
 
@@ -20,6 +19,17 @@ dependencies = ["hyprpicker"]
 license = "MIT"
 icon = "color-picker"
 description = "Color picker bar widget - supports multiple color formats. Depends on hyprpicker."
-min_noctalia = "5.0.0"
 tags = ["tool", "productivity"]
+plugin_api = 3
+
+[[plugin]]
+id = "jubii/godot-provider"
+name = "Godot Provider"
+version = "1.0.0"
+author = "jubii"
+dependencies = ["godot"]
+license = "MIT"
+icon = "folder-open"
+description = "Open a recent Godot project from the launcher. Type /gd to list your projects."
+tags = ["launcher", "development", "productivity"]
 plugin_api = 3
