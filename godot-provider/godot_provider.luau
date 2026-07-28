@@ -5,6 +5,7 @@ local sformat = string.format
 local projectsCache
 local maxResults: number = noctalia.getConfig("max_results") or 100
 local projectsPath: string = noctalia.getConfig("projects_path") or noctalia.expandPath("~/.local/share/godot/projects.cfg")
+local dataDir = noctalia.pluginDataDir()
 
 local function shellQuote(s: string)
 	return "'" .. s:gsub("'", "'\"'\"'") .. "'"
@@ -50,7 +51,13 @@ function filterProjects(query, projects)
     local project = projects[i]
 
     -- score from title or id
-    local project_score: number? = noctalia.fuzzyScore(query, project.title) or noctalia.fuzzyScore(query, project.id)
+    local project_score: number?
+
+    if query == "" then
+      project_score = getUsage(project.id)
+    else
+      project_score = noctalia.fuzzyScore(query, project.title) or noctalia.fuzzyScore(query, project.id)
+    end
 
     if query == "" or project_score ~= nil then
       project.score = project_score -- this will be overriden every time so no problem
@@ -99,10 +106,42 @@ function onQuery(query: string)
 	end
 end
 
+function getUsage(id: string)
+  if id == "" then
+		return 0
+	end
+
+	if dataDir then
+	  local file_path = dataDir .. "/usage.json"
+		local file = noctalia.readFile(file_path)
+		if file then
+	    return noctalia.json.decode(file)[id] or 0
+		end
+	end
+
+	return 0
+end
+
 -- Open godot editor on the selected project
 function onActivate(id: string)
 	if id == "" then
 		return
 	end
+
+	if dataDir then
+	  local file_path = dataDir .. "/usage.json"
+		local file = noctalia.readFile(file_path)
+
+		local data = {}
+		if file then
+	    data = noctalia.json.decode(file)
+		end
+
+		data[id] = data[id] and data[id] + 1 or 1
+
+		local json_str = noctalia.json.encode(data)
+		noctalia.writeFile(file_path, json_str)
+	end
+
 	noctalia.runAsync(sformat("nohup godot -e %s &>/dev/null &", shellQuote(id.."/project.godot")))
 end
