@@ -1,6 +1,6 @@
 local HOME = noctalia.getenv("HOME") or ""
 local tinsert = table.insert
-local tsort = table.sort
+local sformat = string.format
 
 local projectsCache
 local maxResults: number = noctalia.getConfig("max_results") or 100
@@ -104,5 +104,5 @@ function onActivate(id: string)
 	if id == "" then
 		return
 	end
-	noctalia.runAsync(string.format("nohup godot -e %s &>/dev/null &", shellQuote(id.."/project.godot")))
+	noctalia.runAsync(sformat("nohup godot -e %s &>/dev/null &", shellQuote(id.."/project.godot")))
 end
