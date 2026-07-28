@@ -175,5 +175,5 @@ function onActivate(id: string)
 		end
 	end
 
-	noctalia.runAsync(sformat("nohup %s -e %s &>/dev/null &", godot_command, shellQuote(id.."/project.godot")))
+	noctalia.runAsync(sformat("nohup %s -e %s &>/dev/null &", shellQuote(godot_command), shellQuote(id.."/project.godot")))
 end
