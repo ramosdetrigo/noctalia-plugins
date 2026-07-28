@@ -10,6 +10,17 @@ description = "Open a recent Godot project from the launcher. Type /gd to list y
 tags = ["launcher", "development", "productivity"]
 
 [[setting]]
+key = "sort_by"
+type = "select"
+label_key = "settings.sort_by.label"
+description_key = "settings.sort_by.description"
+default = "history"
+options = [
+    {label_key="settings.history", value = "history"},
+    {label_key="settings.usage_count", value = "usage_count"},
+]
+
+[[setting]]
 key = "projects_path"
 type = "file"
 label_key = "settings.projects_path.label"
@@ -17,13 +28,11 @@ description_key = "settings.projects_path.description"
 default = "~/.local/share/godot/projects.cfg"
 
 [[setting]]
-key = "max_results"
-type = "int"
-label_key = "settings.max_results.label"
-description_key = "settings.max_results.description"
-default = 20
-min = 1
-max = 100
+key = "godot_command"
+type = "string"
+label_key = "settings.godot_command.label"
+description_key = "settings.godot_command.description"
+default = "godot"
 
 [[launcher_provider]]
 id = "provider"

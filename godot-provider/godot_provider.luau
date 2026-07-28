@@ -1,11 +1,17 @@
 local HOME = noctalia.getenv("HOME") or ""
 local tinsert = table.insert
+local tremove = table.remove
+local tfind = table.find
+local tsort = table.sort
 local sformat = string.format
 
 local projectsCache
-local maxResults: number = noctalia.getConfig("max_results") or 100
 local projectsPath: string = noctalia.getConfig("projects_path") or noctalia.expandPath("~/.local/share/godot/projects.cfg")
+local godot_command: string = noctalia.getConfig("godot_command") or "godot"
+local sort_by: string = noctalia.getConfig("sort_by") or "history"
 local dataDir = noctalia.pluginDataDir()
+
+if godot_command == "" then godot_command = "godot" end
 
 local function shellQuote(s: string)
 	return "'" .. s:gsub("'", "'\"'\"'") .. "'"
@@ -28,10 +34,7 @@ local function getProjects(file_string: string, query: string)
   local projects = {}
 
   -- Gets the projects inside the projects.cfg (They're wrapped in "[]")
-  local c = 0
   for project_path in file_string:gmatch("%[([^%]]+)%]") do
-    c += 1
-    if c > maxResults then break end
 
     local project_name: string = projectName(project_path)
     tinsert(projects, {
@@ -41,6 +44,9 @@ local function getProjects(file_string: string, query: string)
       icon = "godot",
     })
   end
+
+  -- sort alphabetically
+  tsort(projects, function(a, b) return a.title < b.title end)
 
   return projects
 end
@@ -54,7 +60,7 @@ function filterProjects(query, projects)
     local project_score: number?
 
     if query == "" then
-      project_score = getUsage(project.id)
+      project_score = getScore(project.id)
     else
       project_score = noctalia.fuzzyScore(query, project.title) or noctalia.fuzzyScore(query, project.id)
     end
@@ -78,7 +84,7 @@ function showResults(query, projects)
 		{
  			id = "",
  			title = noctalia.tr("no-projects-found"),
- 			subtitle = noctalia.tr("loading-subtitle"),
+ 			subtitle = noctalia.tr("no-projects-subtitle"),
  			glyph = "loader",
 		},
  	})
@@ -106,16 +112,29 @@ function onQuery(query: string)
 	end
 end
 
-function getUsage(id: string)
+function getScore(id: string)
   if id == "" then
 		return 0
 	end
 
+
 	if dataDir then
-	  local file_path = dataDir .. "/usage.json"
-		local file = noctalia.readFile(file_path)
-		if file then
-	    return noctalia.json.decode(file)[id] or 0
+	  if sort_by == "history" then
+			local file_path = dataDir .. "/history.json"
+  		local file = noctalia.readFile(file_path)
+      local data = {}
+  		if file then
+        data = noctalia.json.decode(file)
+        local i = tfind(data, id) or #data + 1
+        local score = #data - i
+  	    return score
+  		end
+		else
+  	  local file_path = dataDir .. "/usage.json"
+  		local file = noctalia.readFile(file_path)
+  		if file then
+  	    return noctalia.json.decode(file)[id] or 0
+  		end
 		end
 	end
 
@@ -129,19 +148,32 @@ function onActivate(id: string)
 	end
 
 	if dataDir then
-	  local file_path = dataDir .. "/usage.json"
-		local file = noctalia.readFile(file_path)
+	  local file
+    local file_path = dataDir .. (sort_by == "history" and "/history.json" or "/usage.json")
+		file = noctalia.readFile(file_path)
 
-		local data = {}
-		if file then
-	    data = noctalia.json.decode(file)
+		if sort_by == "history" then
+  		local data = {}
+  		if file then data = noctalia.json.decode(file) end
+
+		  local i = tfind(data, id)
+			if i then
+	      tremove(data, i)
+				tinsert(data, 1, id)
+			else
+			  tinsert(data, 1, id)
+			end
+
+			local json_str = noctalia.json.encode(data)
+			noctalia.writeFile(file_path, json_str)
+		else
+		  local data = {}
+  		if file then data = noctalia.json.decode(file) end
+		  data[id] = data[id] and data[id] + 1 or 1
+			local json_str = noctalia.json.encode(data)
+			noctalia.writeFile(file_path, json_str)
 		end
-
-		data[id] = data[id] and data[id] + 1 or 1
-
-		local json_str = noctalia.json.encode(data)
-		noctalia.writeFile(file_path, json_str)
 	end
 
-	noctalia.runAsync(sformat("nohup godot -e %s &>/dev/null &", shellQuote(id.."/project.godot")))
+	noctalia.runAsync(sformat("nohup %s -e %s &>/dev/null &", godot_command, shellQuote(id.."/project.godot")))
 end
