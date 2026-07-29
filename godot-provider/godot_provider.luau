@@ -13,16 +13,16 @@ local dataDir = noctalia.pluginDataDir()
 
 if godot_command == "" then godot_command = "godot" end
 
-local function shellQuote(s: string)
+local function shellQuote(s: string): string
 	return "'" .. s:gsub("'", "'\"'\"'") .. "'"
 end
 
-local function trim(s: string)
-	return s:match("^%s*(.-)%s*$")
+local function trim(s: string): string
+	return s:match("^%s*(.-)%s*$") :: string
 end
 
 -- Gets the project name in project.godot - fallbacks to the folder name
-local function projectName(path: string)
+local function projectName(path: string): string
   local p_godot: string = noctalia.readFile(path .. "/project.godot") or ""
   local project_name = p_godot:match('config/name="(.-)"%s*\n')
 
@@ -35,7 +35,6 @@ local function getProjects(file_string: string, query: string)
 
   -- Gets the projects inside the projects.cfg (They're wrapped in "[]")
   for project_path in file_string:gmatch("%[([^%]]+)%]") do
-
     local project_name: string = projectName(project_path)
     tinsert(projects, {
       id = project_path,
@@ -51,6 +50,7 @@ local function getProjects(file_string: string, query: string)
   return projects
 end
 
+-- filter the projects based on the query with fuzzyScore
 function filterProjects(query, projects)
   local result = {}
   for i = 1, #projects do
@@ -60,7 +60,8 @@ function filterProjects(query, projects)
     local project_score: number?
 
     if query == "" then
-      project_score = getScore(project.id)
+      -- query empty: sort based on the sort_by key
+      project_score = getSortScore(project.id)
     else
       project_score = noctalia.fuzzyScore(query, project.title) or noctalia.fuzzyScore(query, project.id)
     end
@@ -74,6 +75,7 @@ function filterProjects(query, projects)
   return result
 end
 
+-- sends launcher results, warning the user if no projects found
 function showResults(query, projects)
   if #projects > 0 then
     launcher.setResults(query, projects)
@@ -93,30 +95,19 @@ end
 function onQuery(query: string)
   query = trim(query)
 
-	if query == "" then
-	  projectsCache = nil
+  -- resets cache on new prompt
+	if query == "" or projectsCache == nil then
+		local file = noctalia.readFile(projectsPath)
+	  projectsCache = if file then getProjects(file, query) else {}
 	end
 
-	if projectsCache then
-    launcher.setResults(query, filterProjects(query, projectsCache))
-	  return
-	end
-
-	local file = noctalia.readFile(projectsPath)
-
-	if file then
-	  local all_projects = getProjects(file, query)
-    showResults(query, filterProjects(query, all_projects))
-	else
- 	  showResults(query, {})
-	end
+  launcher.setResults(query, filterProjects(query, projectsCache))
 end
 
-function getScore(id: string)
+function getSortScore(id: string): number
   if id == "" then
 		return 0
 	end
-
 
 	if dataDir then
 	  if sort_by == "history" then
@@ -129,7 +120,7 @@ function getScore(id: string)
         local score = #data - i
   	    return score
   		end
-		else
+		else -- usage_count
   	  local file_path = dataDir .. "/usage.json"
   		local file = noctalia.readFile(file_path)
   		if file then
@@ -148,15 +139,15 @@ function onActivate(id: string)
 	end
 
 	if dataDir then
-	  local file
-    local file_path = dataDir .. (sort_by == "history" and "/history.json" or "/usage.json")
+	  local file: string?
+    local file_path: string = dataDir .. (sort_by == "history" and "/history.json" or "/usage.json")
 		file = noctalia.readFile(file_path)
 
 		if sort_by == "history" then
   		local data = {}
   		if file then data = noctalia.json.decode(file) end
 
-		  local i = tfind(data, id)
+		  local i: number? = tfind(data, id)
 			if i then
 	      tremove(data, i)
 				tinsert(data, 1, id)
@@ -164,9 +155,9 @@ function onActivate(id: string)
 			  tinsert(data, 1, id)
 			end
 
-			local json_str = noctalia.json.encode(data)
+			local json_str: string = noctalia.json.encode(data) :: string
 			noctalia.writeFile(file_path, json_str)
-		else
+		else -- usage_count
 		  local data = {}
   		if file then data = noctalia.json.decode(file) end
 		  data[id] = data[id] and data[id] + 1 or 1

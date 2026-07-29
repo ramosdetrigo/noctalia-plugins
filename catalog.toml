@@ -23,10 +23,10 @@ tags = ["tool", "productivity"]
 plugin_api = 3
 
 [[plugin]]
-id = "jubii/godot-provider"
+id = "ramosdetrigo/godot-provider"
 name = "Godot Provider"
 version = "1.0.0"
-author = "jubii"
+author = "ramosdetrigo"
 dependencies = ["godot"]
 license = "MIT"
 icon = "folder-open"

@@ -1,6 +1,6 @@
-id = "jubii/godot-provider"
+id = "ramosdetrigo/godot-provider"
 name = "Godot Provider"
-author = "jubii"
+author = "ramosdetrigo"
 version = "1.0.0"
 plugin_api = 3
 license = "MIT"
